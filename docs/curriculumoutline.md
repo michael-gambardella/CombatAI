@@ -1,0 +1,1 @@
+Create the outline for a three month class that teaches students how to develop this game and all of the core technical features found in the game_overview.md file.
