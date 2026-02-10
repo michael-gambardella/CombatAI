@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Game AI & Combat Systems in UE5 — Interactive Course</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bg4:#21283b;--accent:#58a6ff;--accent2:#3fb950;--accent3:#d29922;--accent4:#f85149;--text:#c9d1d9;--text2:#8b949e;--text3:#6e7681;--border:#30363d;--code-bg:#0d1117;--success:#3fb950;--warning:#d29922;--error:#f85149;--purple:#bc8cff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+/* Sidebar */
+.sidebar{width:280px;background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border);text-align:center}
+.sidebar-header h1{font-size:14px;color:var(--accent);text-transform:uppercase;letter-spacing:2px}
+.sidebar-header p{font-size:11px;color:var(--text2);margin-top:4px}
+.progress-bar{margin:12px 0 0;background:var(--bg4);border-radius:6px;height:8px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .5s;width:0%}
+.progress-text{font-size:11px;color:var(--text3);margin-top:4px}
+.nav-section{padding:8px 0}
+.nav-phase{padding:8px 16px;font-size:11px;color:var(--accent3);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.nav-item{display:flex;align-items:center;padding:8px 16px 8px 24px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;border-left:3px solid transparent;gap:8px}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--bg3);color:var(--accent);border-left-color:var(--accent)}
+.nav-item.completed .nav-check{color:var(--success)}
+.nav-check{font-size:14px;width:18px;flex-shrink:0}
+.nav-item.special{color:var(--accent3)}
+/* Main */
+.main{margin-left:280px;flex:1;min-width:0}
+.top-bar{position:sticky;top:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.top-bar h2{font-size:16px;font-weight:600}
+.top-actions{display:flex;gap:8px}
+.btn{padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:13px;transition:all .15s}
+.btn:hover{background:var(--bg4);border-color:var(--text3)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#4090e0}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+.btn-success:hover{opacity:.9}
+.content{max-width:960px;margin:0 auto;padding:32px}
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:20px;overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.card-header h3{font-size:15px;font-weight:600}
+.card-body{padding:20px}
+.card-body.collapsed{display:none}
+.card-tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.tag-lecture{background:rgba(88,166,255,.15);color:var(--accent)}
+.tag-lab{background:rgba(63,185,80,.15);color:var(--success)}
+.tag-quiz{background:rgba(210,153,34,.15);color:var(--warning)}
+.tag-exam{background:rgba(248,81,73,.15);color:var(--error)}
+.tag-interactive{background:rgba(188,140,255,.15);color:var(--purple)}
+/* Lesson Content */
+.lesson h4{font-size:16px;margin:16px 0 8px;color:var(--text);font-weight:600}
+.lesson h5{font-size:14px;margin:14px 0 6px;color:var(--accent);font-weight:600}
+.lesson p,.lesson li{font-size:14px;color:var(--text2);margin-bottom:6px}
+.lesson ul,.lesson ol{padding-left:24px;margin-bottom:12px}
+.lesson strong{color:var(--text)}
+.lesson .concept{background:var(--bg3);border-left:3px solid var(--accent);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+.lesson .concept h5{margin-top:0;color:var(--accent)}
+.lesson .warning{background:rgba(210,153,34,.1);border-left:3px solid var(--warning);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+.lesson .tip{background:rgba(63,185,80,.1);border-left:3px solid var(--success);padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+/* Code */
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.5}
+code{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:13px}
+:not(pre)>code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+.kw{color:#ff7b72}
+.tp{color:#79c0ff}
+.str{color:#a5d6ff}
+.cm{color:#8b949e;font-style:italic}
+.fn{color:#d2a8ff}
+.num{color:#79c0ff}
+.mc{color:#ffa657}
+/* Quiz */
+.quiz{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px;margin:16px 0}
+.quiz h4{color:var(--warning);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.quiz-q{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.quiz-q:last-of-type{border-bottom:none;padding-bottom:0}
+.quiz-q p{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}
+.quiz-q label{display:block;padding:6px 12px;margin:4px 0;border-radius:4px;cursor:pointer;font-size:13px;color:var(--text2);transition:background .15s}
+.quiz-q label:hover{background:var(--bg4)}
+.quiz-q input[type=radio],.quiz-q input[type=checkbox]{margin-right:8px}
+.quiz-result{margin-top:12px;padding:12px;border-radius:6px;font-size:14px;font-weight:600;display:none}
+.quiz-result.correct{background:rgba(63,185,80,.15);color:var(--success);display:block}
+.quiz-result.incorrect{background:rgba(248,81,73,.15);color:var(--error);display:block}
+/* Interactive Modules */
+.interactive-module{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px;margin:16px 0}
+.interactive-module h4{color:var(--purple);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+canvas{border:1px solid var(--border);border-radius:6px;background:var(--bg);display:block;margin:8px 0}
+.slider-row{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px;color:var(--text2)}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-row .val{min-width:40px;text-align:right;color:var(--accent);font-weight:600}
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th,td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+th{background:var(--bg3);color:var(--accent);font-weight:600}
+td{color:var(--text2)}
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 20px;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* Diagram */
+.diagram{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:20px;margin:12px 0;font-family:'Cascadia Code',monospace;font-size:12px;white-space:pre;line-height:1.4;color:var(--text2);overflow-x:auto}
+.diagram .hl{color:var(--accent)}
+.diagram .hl2{color:var(--success)}
+.diagram .hl3{color:var(--warning)}
+/* Responsive */
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}}
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.content>*{animation:fadeIn .3s ease}
+.score-display{font-size:24px;text-align:center;padding:20px;color:var(--accent);font-weight:700}
+.exam-section{margin:20px 0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR NAVIGATION -->
+<nav class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<h1>Combat AI Course</h1>
+<p>Advanced Game AI & Combat Systems in UE5</p>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text" id="progressText">0 / 16 sections completed</div>
+</div>
+<div class="nav-section">
+<div class="nav-phase">Phase 1 — Foundation</div>
+<div class="nav-item" data-page="week1" onclick="showPage('week1')"><span class="nav-check">○</span>Week 1: Project & Movement</div>
+<div class="nav-item" data-page="week2" onclick="showPage('week2')"><span class="nav-check">○</span>Week 2: Camera & Dodge</div>
+<div class="nav-item" data-page="week3" onclick="showPage('week3')"><span class="nav-check">○</span>Week 3: Combat & Damage</div>
+<div class="nav-phase">Phase 2 — AI Systems</div>
+<div class="nav-item" data-page="week4" onclick="showPage('week4')"><span class="nav-check">○</span>Week 4: AI Base & Perception</div>
+<div class="nav-item" data-page="week5" onclick="showPage('week5')"><span class="nav-check">○</span>Week 5: Utility AI Framework</div>
+<div class="nav-item" data-page="week6" onclick="showPage('week6')"><span class="nav-check">○</span>Week 6: Rusher Archetype</div>
+<div class="nav-item special" data-page="midterm" onclick="showPage('midterm')"><span class="nav-check">★</span>Midterm Exam</div>
+<div class="nav-item" data-page="week7" onclick="showPage('week7')"><span class="nav-check">○</span>Week 7: Watcher & Warden</div>
+<div class="nav-phase">Phase 3 — Group Tactics</div>
+<div class="nav-item" data-page="week8" onclick="showPage('week8')"><span class="nav-check">○</span>Week 8: Data Assets & Tokens</div>
+<div class="nav-item" data-page="week9" onclick="showPage('week9')"><span class="nav-check">○</span>Week 9: Squad Coordination</div>
+<div class="nav-item" data-page="week10" onclick="showPage('week10')"><span class="nav-check">○</span>Week 10: Encounters & Waves</div>
+<div class="nav-phase">Phase 4 — Polish</div>
+<div class="nav-item" data-page="week11" onclick="showPage('week11')"><span class="nav-check">○</span>Week 11: Debug & UI</div>
+<div class="nav-item" data-page="week12" onclick="showPage('week12')"><span class="nav-check">○</span>Week 12: Polish & Delivery</div>
+<div class="nav-item special" data-page="final" onclick="showPage('final')"><span class="nav-check">★</span>Final Exam</div>
+<div class="nav-item" data-page="reference" onclick="showPage('reference')"><span class="nav-check">📖</span>Reference Sheet</div>
+</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+<div class="top-bar">
+<h2 id="pageTitle">Welcome</h2>
+<div class="top-actions">
+<button class="btn" onclick="resetProgress()">Reset Progress</button>
+</div>
+</div>
+<div class="content" id="contentArea">
+<!-- Pages injected by JS -->
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+const state = {
+  currentPage: 'week1',
+  completed: JSON.parse(localStorage.getItem('combatai_completed') || '{}'),
+  quizAnswers: JSON.parse(localStorage.getItem('combatai_quiz') || '{}'),
+};
+
+function saveState() {
+  localStorage.setItem('combatai_completed', JSON.stringify(state.completed));
+  localStorage.setItem('combatai_quiz', JSON.stringify(state.quizAnswers));
+}
+
+function resetProgress() {
+  if (confirm('Reset all progress? This cannot be undone.')) {
+    state.completed = {};
+    state.quizAnswers = {};
+    saveState();
+    updateNav();
+    showPage(state.currentPage);
+  }
+}
+
+function markComplete(page) {
+  state.completed[page] = true;
+  saveState();
+  updateNav();
+}
+
+function updateNav() {
+  const total = 16;
+  const done = Object.keys(state.completed).length;
+  document.getElementById('progressFill').style.width = `${(done/total)*100}%`;
+  document.getElementById('progressText').textContent = `${done} / ${total} sections completed`;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    const pg = el.dataset.page;
+    if (!pg) return;
+    el.classList.toggle('completed', !!state.completed[pg]);
+    el.querySelector('.nav-check').textContent = state.completed[pg] ? '●' : (el.classList.contains('special') ? '★' : '○');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PAGE CONTENT DEFINITIONS
+// ═══════════════════════════════════════════════════════════════
+const pages = {};
+
+// ── WEEK 1 ──
+pages.week1 = {
+title: 'Week 1: Project Architecture & Player Movement',
+html: `
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 1: UE5 C++ Project Architecture</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>Why Project Structure Matters</h4>
+<p>A well-organized project structure is the foundation of any scalable game. In UE5, the project is defined by three key configuration files that the build system reads before compiling a single line of your game code.</p>
+
+<div class="concept"><h5>Key Concept: The UE5 Build Pipeline</h5>
+<p>Unreal's build system (UnrealBuildTool) reads your <code>.uproject</code>, <code>.Target.cs</code>, and <code>.Build.cs</code> files to determine what modules to compile, what dependencies to link, and what plugins to enable. Understanding this pipeline is essential before writing any gameplay code.</p></div>
+
+<h5>The .uproject File</h5>
+<p>This JSON file is the root of your project. It declares which engine version to use, which modules to load, and which plugins to enable.</p>
+<pre><code>{
+  <span class="str">"FileVersion"</span>: <span class="num">3</span>,
+  <span class="str">"EngineAssociation"</span>: <span class="str">"5.4"</span>,
+  <span class="str">"Modules"</span>: [
+    {
+      <span class="str">"Name"</span>: <span class="str">"CombatAI"</span>,
+      <span class="str">"Type"</span>: <span class="str">"Runtime"</span>,
+      <span class="str">"LoadingPhase"</span>: <span class="str">"Default"</span>
+    }
+  ],
+  <span class="str">"Plugins"</span>: [
+    { <span class="str">"Name"</span>: <span class="str">"EnhancedInput"</span>, <span class="str">"Enabled"</span>: <span class="kw">true</span> }
+  ]
+}</code></pre>
+
+<h5>The .Build.cs File</h5>
+<p>This C# file defines your module's build rules: which other modules it depends on, PCH usage, and include paths.</p>
+<pre><code><span class="kw">public class</span> <span class="tp">CombatAI</span> : <span class="tp">ModuleRules</span>
+{
+    <span class="kw">public</span> <span class="fn">CombatAI</span>(<span class="tp">ReadOnlyTargetRules</span> Target) : <span class="kw">base</span>(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PublicDependencyModuleNames.AddRange(<span class="kw">new</span> <span class="tp">string</span>[]
+        {
+            <span class="str">"Core"</span>, <span class="str">"CoreUObject"</span>, <span class="str">"Engine"</span>,
+            <span class="str">"InputCore"</span>, <span class="str">"EnhancedInput"</span>,
+            <span class="str">"AIModule"</span>, <span class="str">"GameplayTasks"</span>
+        });
+    }
+}</code></pre>
+
+<h5>Project Folder Structure</h5>
+<div class="diagram">Source/CombatAI/
+├── <span class="hl">Core/</span>          GameMode, GameState, PlayerController
+├── <span class="hl">Player/</span>        PlayerCharacter, Stats, AnimInstance
+├── <span class="hl">Camera/</span>        CombatCamera with effects
+├── <span class="hl">Combat/</span>        Shared damage pipeline
+├── <span class="hl2">AI/</span>
+│   ├── Core/        Base character, controller, perception
+│   ├── UtilityAI/   Response curves, considerations, actions
+│   ├── Coordination/ Squad, tokens, flanking, cover
+│   ├── Archetypes/  Rusher, Watcher, Warden
+│   └── Debug/       Visualization HUD
+├── <span class="hl3">Data/</span>          Data Assets (profiles, encounters)
+├── <span class="hl3">Encounter/</span>     Wave manager
+└── <span class="hl3">UI/</span>            HUD, menus, enemy health bars</div>
+
+<h5>The UE5 Reflection System</h5>
+<p>UE5 uses macros to expose C++ to the editor, Blueprints, and garbage collector:</p>
+<table>
+<tr><th>Macro</th><th>Purpose</th><th>Example</th></tr>
+<tr><td><code>UCLASS()</code></td><td>Marks a class for reflection</td><td>Actors, components, objects</td></tr>
+<tr><td><code>UPROPERTY()</code></td><td>Exposes a variable</td><td>Health, speed, damage values</td></tr>
+<tr><td><code>UFUNCTION()</code></td><td>Exposes a function</td><td>BlueprintCallable methods</td></tr>
+<tr><td><code>USTRUCT()</code></td><td>Marks a struct</td><td>FDamageInfo, FPerceptionData</td></tr>
+<tr><td><code>UENUM()</code></td><td>Marks an enum</td><td>EAIState, EPlayerCombatState</td></tr>
+</table>
+
+<div class="tip"><h5>💡 Pro Tip: Meta Specifiers</h5>
+<p>Use <code>meta = (ClampMin = "0", ClampMax = "1", ToolTip = "Description")</code> on every designer-facing UPROPERTY. This prevents invalid values and documents the parameter right in the editor.</p></div>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 2: Character Movement & Enhanced Input</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The ACharacter Class Hierarchy</h4>
+<p><code>ACharacter</code> inherits from <code>APawn</code> and comes with three built-in components:</p>
+<ul>
+<li><strong>UCapsuleComponent</strong> — The root collision shape (default 34×88 cm)</li>
+<li><strong>USkeletalMeshComponent</strong> — The visual mesh for the character</li>
+<li><strong>UCharacterMovementComponent</strong> — The movement engine (walk, fall, swim, fly)</li>
+</ul>
+
+<h5>Movement Component Deep Dive</h5>
+<p>The <code>UCharacterMovementComponent</code> handles all physics-based movement. Key properties:</p>
+<pre><code><span class="cm">// In the constructor</span>
+<span class="tp">UCharacterMovementComponent</span>* MoveComp = GetCharacterMovement();
+MoveComp-><span class="fn">MaxWalkSpeed</span> = <span class="num">400.0f</span>;      <span class="cm">// Base walk speed</span>
+MoveComp-><span class="fn">JumpZVelocity</span> = <span class="num">600.0f</span>;     <span class="cm">// Tuned for ~300cm height</span>
+MoveComp-><span class="fn">AirControl</span> = <span class="num">0.35f</span>;         <span class="cm">// Mid-air steering</span>
+MoveComp-><span class="fn">bOrientRotationToMovement</span> = <span class="kw">true</span>; <span class="cm">// Face movement dir</span>
+MoveComp-><span class="fn">RotationRate</span> = FRotator(<span class="num">0</span>, <span class="num">540</span>, <span class="num">0</span>);</code></pre>
+
+<h5>The Decoupled Input Pattern</h5>
+<p>We separate input <em>binding</em> (in the Controller) from input <em>execution</em> (in the Character). The Controller calls <code>Request*()</code> methods on the Character:</p>
+<pre><code><span class="cm">// Controller binds input and calls:</span>
+<span class="kw">void</span> <span class="tp">ACombatAIPlayerController</span>::<span class="fn">HandleMove</span>(<span class="kw">const</span> FInputActionValue& Value)
+{
+    <span class="kw">if</span> (CachedPlayerCharacter)
+        CachedPlayerCharacter-><span class="fn">RequestMove</span>(Value.Get&lt;FVector2D&gt;());
+}
+
+<span class="cm">// Character processes the request:</span>
+<span class="kw">void</span> <span class="tp">APlayerCharacter</span>::<span class="fn">RequestMove</span>(<span class="kw">const</span> FVector2D& Input)
+{
+    CurrentMoveInput = Input;  <span class="cm">// Stored, processed in Tick</span>
+}</code></pre>
+
+<div class="concept"><h5>Key Concept: Why Decouple Input?</h5>
+<p>By separating binding from execution, we can: (1) swap controllers without changing character logic, (2) replay inputs for testing, (3) let AI "send" the same requests through a different controller, and (4) keep the Character class focused on gameplay rules.</p></div>
+
+<h5>Stamina System</h5>
+<p>The <code>UPlayerStatsComponent</code> manages health, stamina, and ammo with regeneration:</p>
+<pre><code><span class="kw">void</span> <span class="tp">UPlayerStatsComponent</span>::<span class="fn">TickComponent</span>(<span class="kw">float</span> DeltaTime, ...)
+{
+    <span class="cm">// Regen delay: wait before regenerating</span>
+    <span class="kw">if</span> (!bIsRegenerating)
+    {
+        StaminaRegenTimer -= DeltaTime;
+        <span class="kw">if</span> (StaminaRegenTimer <= <span class="num">0.0f</span>)
+            bIsRegenerating = <span class="kw">true</span>;
+    }
+    <span class="cm">// Regenerate</span>
+    <span class="kw">if</span> (bIsRegenerating && CurrentStamina < MaxStamina)
+    {
+        CurrentStamina = FMath::<span class="fn">Min</span>(
+            CurrentStamina + StaminaRegenRate * DeltaTime, MaxStamina);
+        OnStaminaChanged.<span class="fn">Broadcast</span>(CurrentStamina, MaxStamina);
+    }
+}</code></pre>
+
+<div class="warning"><h5>⚠️ Common Mistake: Stamina Drain in Tick</h5>
+<p>Sprint stamina drain must use <code>DeltaTime</code> to be frame-rate independent: <code>ConsumeStamina(SprintCost * DeltaTime)</code>. Without this, sprinting drains faster at higher frame rates.</p></div>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lab 1: Player Character Foundation</h3><span class="card-tag tag-lab">LAB</span></div><div class="card-body lesson">
+<h4>Deliverable</h4>
+<p>A player character that walks (400 cm/s), sprints (700 cm/s) with stamina drain, and jumps (300 cm). Enhanced Input configured for both gamepad and keyboard/mouse.</p>
+
+<h5>Exercise Checklist</h5>
+<ol>
+<li>Create the UE5 C++ project with the folder structure from the architecture diagram</li>
+<li>Implement <code>APlayerCharacter</code> with <code>UPlayerStatsComponent</code></li>
+<li>Implement <code>ACombatAIPlayerController</code> with Enhanced Input binding</li>
+<li>Configure walk/sprint speed switching with stamina consumption</li>
+<li>Implement stamina regeneration with configurable delay</li>
+<li>Initialize Git repository with <code>.gitignore</code> and <code>.gitattributes</code></li>
+</ol>
+
+<h5>Key Code Pattern: Component Composition</h5>
+<pre><code><span class="tp">APlayerCharacter</span>::<span class="fn">APlayerCharacter</span>()
+{
+    <span class="cm">// Create components in constructor — UE5 pattern</span>
+    StatsComponent = CreateDefaultSubobject&lt;<span class="tp">UPlayerStatsComponent</span>&gt;(
+        TEXT(<span class="str">"PlayerStats"</span>));
+    
+    CombatComp = CreateDefaultSubobject&lt;<span class="tp">UCombatComponent</span>&gt;(
+        TEXT(<span class="str">"CombatComponent"</span>));
+    
+    CameraBoom = CreateDefaultSubobject&lt;<span class="tp">USpringArmComponent</span>&gt;(
+        TEXT(<span class="str">"CameraBoom"</span>));
+    CameraBoom-><span class="fn">SetupAttachment</span>(RootComponent);
+}</code></pre>
+
+<h5>Verification Criteria</h5>
+<table>
+<tr><th>Test</th><th>Expected Result</th></tr>
+<tr><td>Walk speed</td><td>Character moves at 400 cm/s (verify with <code>stat unit</code>)</td></tr>
+<tr><td>Sprint speed</td><td>Holding sprint increases to 700 cm/s</td></tr>
+<tr><td>Sprint stamina</td><td>Stamina decreases while sprinting</td></tr>
+<tr><td>Stamina regen</td><td>Stamina regenerates after 0.5s delay when sprint released</td></tr>
+<tr><td>Jump height</td><td>Character reaches ~300 cm (place a reference cube)</td></tr>
+<tr><td>Gamepad</td><td>Left stick moves, all buttons functional</td></tr>
+</table>
+</div></div>
+
+<div class="quiz" id="quiz-week1">
+<h4>📝 Week 1 Knowledge Check</h4>
+<div class="quiz-q" data-correct="b">
+<p>1. In UE5, which file defines module dependencies like "EnhancedInput" and "AIModule"?</p>
+<label><input type="radio" name="q1w1" value="a"> .uproject</label>
+<label><input type="radio" name="q1w1" value="b"> .Build.cs</label>
+<label><input type="radio" name="q1w1" value="c"> .Target.cs</label>
+<label><input type="radio" name="q1w1" value="d"> CombatAI.h</label>
+</div>
+<div class="quiz-q" data-correct="c">
+<p>2. Why do we decouple input binding (Controller) from input execution (Character)?</p>
+<label><input type="radio" name="q2w1" value="a"> UE5 requires it for multiplayer</label>
+<label><input type="radio" name="q2w1" value="b"> It improves frame rate</label>
+<label><input type="radio" name="q2w1" value="c"> It allows swapping controllers, replay, and AI reuse</label>
+<label><input type="radio" name="q2w1" value="d"> It's just a coding convention with no practical benefit</label>
+</div>
+<div class="quiz-q" data-correct="b">
+<p>3. What UE5 macro exposes a C++ variable to the editor with clamping?</p>
+<label><input type="radio" name="q3w1" value="a"> UFUNCTION(BlueprintCallable)</label>
+<label><input type="radio" name="q3w1" value="b"> UPROPERTY(EditAnywhere, meta = (ClampMin, ClampMax))</label>
+<label><input type="radio" name="q3w1" value="c"> UCLASS(BlueprintType)</label>
+<label><input type="radio" name="q3w1" value="d"> USTRUCT(BlueprintType)</label>
+</div>
+<div class="quiz-q" data-correct="a">
+<p>4. Why must sprint stamina drain use DeltaTime?</p>
+<label><input type="radio" name="q4w1" value="a"> To be frame-rate independent</label>
+<label><input type="radio" name="q4w1" value="b"> Because UE5 requires it</label>
+<label><input type="radio" name="q4w1" value="c"> To prevent compiler errors</label>
+<label><input type="radio" name="q4w1" value="d"> It doesn't — DeltaTime is optional</label>
+</div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week1','week1')">Submit Quiz</button>
+<div class="quiz-result" id="result-week1"></div>
+</div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week1');showPage('week2')">Complete Week 1 → Continue to Week 2</button></div>
+`};
+
+// ── WEEK 2 ──
+pages.week2 = {title:'Week 2: Third-Person Camera & Dodge System', html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 3: Third-Person Camera Systems</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>Spring Arm + Camera Architecture</h4>
+<p>The UE5 camera system uses two components working together:</p>
+<ul>
+<li><strong>USpringArmComponent</strong> — An invisible "boom" extending from the character, handling collision</li>
+<li><strong>UCameraComponent</strong> — The actual camera, attached to the end of the spring arm</li>
+</ul>
+<pre><code><span class="cm">// Over-the-shoulder setup</span>
+CameraBoom-><span class="fn">TargetArmLength</span> = <span class="num">350.0f</span>;
+CameraBoom-><span class="fn">SetRelativeLocation</span>(FVector(<span class="num">0</span>, <span class="num">60</span>, <span class="num">120</span>)); <span class="cm">// Right + Up offset</span>
+CameraBoom-><span class="fn">bUsePawnControlRotation</span> = <span class="kw">true</span>;
+CameraBoom-><span class="fn">bDoCollisionTest</span> = <span class="kw">true</span>;           <span class="cm">// Auto-avoid walls</span>
+CameraBoom-><span class="fn">ProbeSize</span> = <span class="num">12.0f</span>;                  <span class="cm">// Collision sphere size</span>
+
+FollowCamera-><span class="fn">SetupAttachment</span>(CameraBoom, USpringArmComponent::SocketName);
+FollowCamera-><span class="fn">FieldOfView</span> = <span class="num">75.0f</span>;</code></pre>
+
+<h5>Camera Effects</h5>
+<p>Combat cameras need effects that amplify the "feel" of combat:</p>
+<table>
+<tr><th>Effect</th><th>Technique</th><th>When Used</th></tr>
+<tr><td>Screen Shake</td><td>Random camera offset, decaying over time</td><td>On hit impact</td></tr>
+<tr><td>Hitlag</td><td><code>SetGlobalTimeDilation(0.01)</code> for 2-4 frames</td><td>Heavy melee hits</td></tr>
+<tr><td>Slow Motion</td><td><code>SetGlobalTimeDilation(0.3)</code> with timer</td><td>Kill cam</td></tr>
+<tr><td>FOV Shift</td><td>Smoothly widen FOV when sprinting</td><td>Sprint, charge attacks</td></tr>
+</table>
+
+<div class="concept"><h5>Key Concept: Hitlag Creates Weight</h5>
+<p>A 2-4 frame pause (0.03-0.07s) on heavy impact makes attacks feel <em>impactful</em>. Without it, even powerful attacks feel floaty. Games like Dark Souls and God of War use this extensively. The key is using <strong>real time</strong> (not dilated time) for the hitlag timer.</p></div>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 4: Dodge Mechanics & I-Frames</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The Dodge Roll</h4>
+<p>A dodge roll is one of the most important defensive mechanics in action games. Our implementation has 4 phases:</p>
+<ol>
+<li><strong>Input</strong> — Player presses dodge button; stamina is checked and consumed</li>
+<li><strong>Direction</strong> — Dodge direction determined from movement input (or backward if none)</li>
+<li><strong>Active Frames</strong> — Character moves at DodgeSpeed; i-frames active within the window</li>
+<li><strong>Recovery</strong> — Dodge ends; character returns to Idle state</li>
+</ol>
+
+<pre><code><span class="kw">void</span> <span class="tp">APlayerCharacter</span>::<span class="fn">ProcessDodge</span>(<span class="kw">float</span> DeltaTime)
+{
+    <span class="kw">if</span> (!bIsDodging) <span class="kw">return</span>;
+    
+    DodgeTimer += DeltaTime;
+    
+    <span class="cm">// I-frame window: 0.1s to 0.35s into the dodge</span>
+    bIsInvulnerable = (DodgeTimer >= DodgeIFrameStart 
+                    && DodgeTimer <= DodgeIFrameEnd);
+    
+    <span class="cm">// Apply dodge velocity</span>
+    GetCharacterMovement()->Velocity = 
+        FVector(DodgeDirection.X, DodgeDirection.Y, <span class="num">0</span>) * DodgeSpeed;
+    
+    <span class="cm">// End dodge when duration expires</span>
+    <span class="kw">if</span> (DodgeTimer >= DodgeDuration)
+    {
+        bIsDodging = <span class="kw">false</span>;
+        bIsInvulnerable = <span class="kw">false</span>;
+        SetCombatState(EPlayerCombatState::Idle);
+    }
+}</code></pre>
+
+<div class="warning"><h5>⚠️ I-Frame Timing is Critical</h5>
+<p>The i-frame window (0.1s–0.35s) must be tight enough to require skill but generous enough to be learnable. Too wide → dodge is overpowered. Too narrow → feels unfair. Playtest this value extensively.</p></div>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>🎮 Interactive: Dodge I-Frame Visualizer</h3><span class="card-tag tag-interactive">INTERACTIVE</span></div><div class="card-body">
+<div class="interactive-module">
+<h4>⚡ I-Frame Timeline Visualizer</h4>
+<p style="font-size:13px;color:var(--text2)">Adjust the sliders to see how i-frame timing affects the dodge roll. The green zone shows when the player is invulnerable.</p>
+<canvas id="iframeCanvas" width="800" height="120"></canvas>
+<div class="slider-row"><span>Duration:</span><input type="range" id="dodgeDur" min="0.2" max="1.0" step="0.05" value="0.5" oninput="drawIframes()"><span class="val" id="dodgeDurVal">0.50s</span></div>
+<div class="slider-row"><span>I-Frame Start:</span><input type="range" id="ifStart" min="0.0" max="0.5" step="0.01" value="0.1" oninput="drawIframes()"><span class="val" id="ifStartVal">0.10s</span></div>
+<div class="slider-row"><span>I-Frame End:</span><input type="range" id="ifEnd" min="0.1" max="0.8" step="0.01" value="0.35" oninput="drawIframes()"><span class="val" id="ifEndVal">0.35s</span></div>
+</div>
+</div></div>
+
+<div class="quiz" id="quiz-week2">
+<h4>📝 Week 2 Knowledge Check</h4>
+<div class="quiz-q" data-correct="c">
+<p>1. What UE5 component handles camera collision avoidance automatically?</p>
+<label><input type="radio" name="q1w2" value="a"> UCameraComponent</label>
+<label><input type="radio" name="q1w2" value="b"> UCombatCameraComponent</label>
+<label><input type="radio" name="q1w2" value="c"> USpringArmComponent</label>
+<label><input type="radio" name="q1w2" value="d"> USceneComponent</label>
+</div>
+<div class="quiz-q" data-correct="b">
+<p>2. Why should the hitlag timer use real time instead of dilated time?</p>
+<label><input type="radio" name="q2w2" value="a"> Real time is more accurate</label>
+<label><input type="radio" name="q2w2" value="b"> Because time dilation is set near-zero, dilated DeltaTime would be too small to count down</label>
+<label><input type="radio" name="q2w2" value="c"> UE5 doesn't support dilated time</label>
+<label><input type="radio" name="q2w2" value="d"> It doesn't matter which time you use</label>
+</div>
+<div class="quiz-q" data-correct="a">
+<p>3. What determines dodge direction when no movement input is held?</p>
+<label><input type="radio" name="q3w2" value="a"> The character dodges backward (negative forward vector)</label>
+<label><input type="radio" name="q3w2" value="b"> The dodge doesn't execute</label>
+<label><input type="radio" name="q3w2" value="c"> The character dodges forward</label>
+<label><input type="radio" name="q3w2" value="d"> A random direction is chosen</label>
+</div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week2','week2')">Submit Quiz</button>
+<div class="quiz-result" id="result-week2"></div>
+</div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week2');showPage('week3')">Complete Week 2 → Continue to Week 3</button></div>
+`};
+
+// ── WEEK 3 ──
+pages.week3 = {title:'Week 3: Melee Combat & Shared Damage Pipeline', html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 5: Melee Combat Implementation</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The Combo System</h4>
+<p>A 3-hit combo chain requires three interconnected systems: <strong>input buffering</strong>, <strong>combo window timing</strong>, and <strong>montage sequencing</strong>.</p>
+<pre><code><span class="kw">void</span> <span class="tp">APlayerCharacter</span>::<span class="fn">RequestLightAttack</span>()
+{
+    <span class="cm">// Already attacking? Buffer the input for next combo hit</span>
+    <span class="kw">if</span> (CombatState == EPlayerCombatState::LightAttack)
+    {
+        bComboInputBuffered = <span class="kw">true</span>;
+        <span class="kw">return</span>;
+    }
+    <span class="cm">// Start fresh combo</span>
+    <span class="kw">if</span> (CanPerformAction())
+    {
+        ComboCount = <span class="num">0</span>;
+        ExecuteLightAttack();
+    }
+}
+
+<span class="kw">void</span> <span class="tp">APlayerCharacter</span>::<span class="fn">OnMontageEnded</span>(UAnimMontage* M, <span class="kw">bool</span> bInterrupted)
+{
+    <span class="cm">// Check buffer → continue combo or reset</span>
+    <span class="kw">if</span> (CombatState == EPlayerCombatState::LightAttack && bComboInputBuffered)
+    {
+        bComboInputBuffered = <span class="kw">false</span>;
+        ExecuteLightAttack();  <span class="cm">// Next hit in chain</span>
+        <span class="kw">return</span>;
+    }
+    ComboCount = <span class="num">0</span>;
+    SetCombatState(EPlayerCombatState::Idle);
+}</code></pre>
+
+<div class="concept"><h5>Key Concept: Input Buffering</h5>
+<p>Input buffering accepts attack input during an active attack animation and stores it. When the current attack finishes, the buffer is consumed to start the next hit. Without buffering, players must perfectly time each press to the exact frame — which feels unresponsive.</p></div>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 6: The Damage Pipeline & Hit Detection</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>FDamageInfo: The Universal Damage Packet</h4>
+<p>Every damage event in the game — player attacks, enemy attacks, AOE — uses the same struct:</p>
+<pre><code><span class="mc">USTRUCT</span>(BlueprintType)
+<span class="kw">struct</span> <span class="tp">FDamageInfo</span>
+{
+    <span class="mc">GENERATED_BODY</span>()
+    
+    <span class="kw">float</span> Amount = <span class="num">0.0f</span>;               <span class="cm">// Raw damage</span>
+    EStaggerLevel StaggerLevel;        <span class="cm">// None/Low/Medium/High/Max</span>
+    <span class="kw">float</span> StaggerValue = <span class="num">0.0f</span>;         <span class="cm">// Numerical stagger contribution</span>
+    AActor* DamageSource = <span class="kw">nullptr</span>;   <span class="cm">// Who dealt it</span>
+    FVector HitDirection;              <span class="cm">// Source → Target direction</span>
+    FVector HitLocation;               <span class="cm">// World-space impact point</span>
+    EDamageType DamageType;            <span class="cm">// Melee/Ranged/AOE/Counter</span>
+    <span class="kw">bool</span> bIsWeakPointHit = <span class="kw">false</span>;     <span class="cm">// Set by armor system</span>
+};</code></pre>
+
+<h5>Directional Armor (Dot Product)</h5>
+<p>The Warden's frontal armor uses the <strong>dot product</strong> between the hit direction and the enemy's forward vector:</p>
+<pre><code><span class="cm">// Dot > 0.3 = frontal hit → reduce damage</span>
+<span class="cm">// Dot < -0.3 = rear hit → weak point bonus</span>
+<span class="kw">float</span> Dot = FVector::<span class="fn">DotProduct</span>(OwnerForward, NormalizedHitDir);
+
+<span class="kw">if</span> (Dot > <span class="num">0.3f</span>)  <span class="cm">// Hit from FRONT</span>
+    <span class="kw">return</span> BaseDamage * (<span class="num">1.0f</span> - FrontalArmorReduction);  <span class="cm">// 50% less</span>
+<span class="kw">else if</span> (Dot < -<span class="num">0.3f</span>)  <span class="cm">// Hit from BACK</span>
+    <span class="kw">return</span> BaseDamage * WeakPointMultiplier;  <span class="cm">// 2x damage!</span></code></pre>
+
+<h5>Animation-Driven Hit Detection</h5>
+<p>Hits are detected by sweeping a sphere between two sockets on the weapon mesh each frame while attack is active:</p>
+<pre><code><span class="cm">// Get socket positions on the skeletal mesh</span>
+FVector Start = Mesh-><span class="fn">GetSocketLocation</span>(TEXT(<span class="str">"weapon_start"</span>));
+FVector End = Mesh-><span class="fn">GetSocketLocation</span>(TEXT(<span class="str">"weapon_end"</span>));
+
+<span class="cm">// Sphere sweep between them</span>
+GetWorld()-><span class="fn">SweepMultiByChannel</span>(
+    Hits, Start, End, FQuat::Identity,
+    ECC_Pawn, FCollisionShape::<span class="fn">MakeSphere</span>(<span class="num">15.0f</span>), Params);</code></pre>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>🎮 Interactive: Damage Pipeline Simulator</h3><span class="card-tag tag-interactive">INTERACTIVE</span></div><div class="card-body">
+<div class="interactive-module">
+<h4>⚔️ Damage Pipeline Calculator</h4>
+<p style="font-size:13px;color:var(--text2)">Enter attack values to see how the pipeline processes damage through armor and weak points.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0">
+<div>
+<div class="slider-row"><span>Base Damage:</span><input type="range" id="dmgBase" min="5" max="50" value="25" oninput="calcDamage()"><span class="val" id="dmgBaseVal">25</span></div>
+<div class="slider-row"><span>Frontal Armor:</span><input type="range" id="dmgArmor" min="0" max="100" value="50" oninput="calcDamage()"><span class="val" id="dmgArmorVal">50%</span></div>
+<div class="slider-row"><span>Weak Point Mult:</span><input type="range" id="dmgWeak" min="100" max="400" value="200" oninput="calcDamage()"><span class="val" id="dmgWeakVal">2.0x</span></div>
+<div class="slider-row"><span>Hit Angle:</span>
+<select id="dmgAngle" onchange="calcDamage()" style="flex:1;padding:4px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px">
+<option value="front">Front (dot > 0.3)</option>
+<option value="side">Side (|dot| < 0.3)</option>
+<option value="back">Back (dot < -0.3)</option>
+</select></div>
+</div>
+<div style="background:var(--bg);padding:16px;border-radius:6px;text-align:center">
+<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Final Damage</div>
+<div id="dmgResult" style="font-size:36px;font-weight:700;color:var(--accent);margin:8px 0">25.0</div>
+<div id="dmgNote" style="font-size:12px;color:var(--text2)">No modifiers (side hit)</div>
+</div>
+</div>
+</div>
+</div></div>
+
+<div class="quiz" id="quiz-week3">
+<h4>📝 Week 3 Knowledge Check</h4>
+<div class="quiz-q" data-correct="b"><p>1. What scoring method does FDamageInfo use for stagger?</p>
+<label><input type="radio" name="q1w3" value="a"> Boolean (stagger or don't)</label>
+<label><input type="radio" name="q1w3" value="b"> Accumulative (stagger values add up until threshold is reached)</label>
+<label><input type="radio" name="q1w3" value="c"> Percentage-based (each hit has a % chance to stagger)</label>
+<label><input type="radio" name="q1w3" value="d"> Timer-based (stagger after X seconds of combat)</label></div>
+<div class="quiz-q" data-correct="c"><p>2. Why does hit detection use a per-swing hit list?</p>
+<label><input type="radio" name="q2w3" value="a"> To track combos</label>
+<label><input type="radio" name="q2w3" value="b"> For performance optimization</label>
+<label><input type="radio" name="q2w3" value="c"> To prevent the same target from being hit multiple times per swing</label>
+<label><input type="radio" name="q2w3" value="d"> UE5 requires it</label></div>
+<div class="quiz-q" data-correct="a"><p>3. A dot product of -0.5 between hit direction and enemy forward means:</p>
+<label><input type="radio" name="q3w3" value="a"> The hit came from behind the enemy</label>
+<label><input type="radio" name="q3w3" value="b"> The hit came from the front</label>
+<label><input type="radio" name="q3w3" value="c"> The hit came from the side</label>
+<label><input type="radio" name="q3w3" value="d"> The enemy is facing the attacker</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week3','week3')">Submit Quiz</button>
+<div class="quiz-result" id="result-week3"></div>
+</div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week3');showPage('week4')">Complete Week 3 → Continue to Week 4</button></div>
+`};
+
+// ── WEEKS 4-12, MIDTERM, FINAL, REFERENCE ──
+// Generating remaining pages with full content
+
+pages.week4={title:'Week 4: AI Foundation — Base Classes & Perception',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 7: Enemy AI Architecture</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The AI Character Hierarchy</h4>
+<p>All enemy archetypes share a common base class that provides shared functionality:</p>
+<div class="diagram"><span class="hl">AAICharacterBase</span> (abstract)
+├── Components: CombatComponent, HitDetection
+├── State Machine: EAIState (Idle→Alert→Combat→Searching→Dead)
+├── Virtual Hooks: OnEnterCombat(), OnStaggered()
+│
+├── <span class="hl2">ARusherCharacter</span>  (7 Utility Actions, melee focus)
+├── <span class="hl2">AWatcherCharacter</span> (6 Utility Actions, ranged focus)
+└── <span class="hl2">AWardenCharacter</span>  (7 Utility Actions, tank focus)</div>
+
+<div class="concept"><h5>Key Concept: The AI State Machine</h5>
+<p>The high-level state machine governs which AI systems are active. In <strong>Idle</strong>, perception runs at low frequency. In <strong>Combat</strong>, the full Utility AI + Behavior Tree loop is active. This saves performance and creates natural behavior transitions.</p></div>
+
+<pre><code><span class="cm">// State transitions fire delegates for BT/UI consumption</span>
+<span class="kw">void</span> <span class="tp">AAICharacterBase</span>::<span class="fn">SetAIState</span>(EAIState NewState)
+{
+    EAIState OldState = CurrentAIState;
+    CurrentAIState = NewState;
+    OnAIStateChanged.<span class="fn">Broadcast</span>(OldState, NewState);
+    
+    <span class="kw">if</span> (NewState == EAIState::Combat)
+        <span class="fn">OnEnterCombat</span>();  <span class="cm">// Virtual — archetype overrides</span>
+}</code></pre>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 8: Custom Perception System</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>Why Custom Perception?</h4>
+<p>UE5 ships with <code>UAIPerceptionComponent</code>, but we build our own for three reasons:</p>
+<ol>
+<li><strong>Threat Scoring</strong> — Built-in perception doesn't score threat; it only detects presence</li>
+<li><strong>Memory & Decay</strong> — We need threat to decay over time with configurable rates</li>
+<li><strong>Performance Control</strong> — We stagger checks across enemies with randomized offsets</li>
+</ol>
+
+<h5>Sight Detection: FOV + Line of Sight</h5>
+<pre><code><span class="kw">bool</span> <span class="tp">UAICombatPerceptionComponent</span>::<span class="fn">IsInFOV</span>(AActor* Target, <span class="kw">float</span> FOVAngle)
+{
+    FVector ToTarget = (Target->GetActorLocation() 
+                      - GetOwner()->GetActorLocation()).<span class="fn">GetSafeNormal</span>();
+    FVector Forward = GetOwner()-><span class="fn">GetActorForwardVector</span>();
+    
+    <span class="kw">float</span> Dot = FVector::<span class="fn">DotProduct</span>(Forward, ToTarget);
+    <span class="kw">float</span> HalfAngleRad = FMath::<span class="fn">DegreesToRadians</span>(FOVAngle * <span class="num">0.5f</span>);
+    
+    <span class="kw">return</span> Dot >= FMath::<span class="fn">Cos</span>(HalfAngleRad);
+}</code></pre>
+
+<h5>4-Factor Threat Assessment</h5>
+<table>
+<tr><th>Factor</th><th>Weight</th><th>Input</th></tr>
+<tr><td>Proximity</td><td>0.30</td><td>1.0 - (distance / maxRange)</td></tr>
+<tr><td>Player Action</td><td>0.25</td><td>Attacking=80, Idle=30, Staggered=10</td></tr>
+<tr><td>Damage Received</td><td>0.25</td><td>Recent damage taken × 2, clamped to 100</td></tr>
+<tr><td>Ally Casualties</td><td>0.20</td><td>(1 - allyCount/maxAllies) × 100</td></tr>
+</table>
+
+<div class="tip"><h5>💡 Staggered Perception Ticks</h5>
+<p>Each enemy randomizes its initial <code>SightCheckTimer</code> with <code>FMath::RandRange(0, SightCheckInterval)</code>. This spreads raycast costs across frames — 10 enemies at 0.2s interval = only 1 raycast per frame instead of 10 on the same frame.</p></div>
+</div></div>
+
+<div class="quiz" id="quiz-week4"><h4>📝 Week 4 Knowledge Check</h4>
+<div class="quiz-q" data-correct="b"><p>1. What math operation is used to check if a target is within an FOV cone?</p>
+<label><input type="radio" name="q1w4" value="a"> Cross product</label>
+<label><input type="radio" name="q1w4" value="b"> Dot product compared against cosine of half-angle</label>
+<label><input type="radio" name="q1w4" value="c"> Distance comparison</label>
+<label><input type="radio" name="q1w4" value="d"> Atan2 angle calculation</label></div>
+<div class="quiz-q" data-correct="c"><p>2. Why randomize initial perception tick timers?</p>
+<label><input type="radio" name="q2w4" value="a"> To make enemy behavior unpredictable</label>
+<label><input type="radio" name="q2w4" value="b"> UE5 requires randomized ticks</label>
+<label><input type="radio" name="q2w4" value="c"> To spread raycast costs across frames for performance</label>
+<label><input type="radio" name="q3w4" value="d"> It doesn't matter when ticks occur</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week4','week4')">Submit Quiz</button>
+<div class="quiz-result" id="result-week4"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week4');showPage('week5')">Complete Week 4 → Continue to Week 5</button></div>`};
+
+pages.week5={title:'Week 5: Utility AI Framework',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 9: Utility AI Theory</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>Why Hybrid AI?</h4>
+<p>Pure Behavior Trees suffer from <strong>combinatorial explosion</strong>: every new context factor doubles the branches. Utility AI solves this by <strong>scoring</strong> all options and picking the best.</p>
+<div class="diagram">
+<span class="hl3">Utility AI</span> decides <span class="hl">WHAT</span> to do  →  Writes to Blackboard
+<span class="hl3">Behavior Tree</span> decides <span class="hl2">HOW</span> to do it  →  Reads from Blackboard
+
+Example: Utility picks "Lunge Attack" (score: 0.87)
+         BT executes: Face Player → Play Montage → Apply Damage</div>
+
+<h5>Multiplicative Scoring</h5>
+<p>Each action's score is the <strong>product</strong> of all its consideration scores:</p>
+<pre><code>score = <span class="num">1.0</span>
+<span class="kw">for each</span> consideration:
+    input = <span class="fn">normalize</span>(world_value, min, max)  <span class="cm">// → [0, 1]</span>
+    response = <span class="fn">apply_curve</span>(input)              <span class="cm">// → [0, 1]</span>
+    score *= response                           <span class="cm">// Multiplicative!</span>
+score *= action_weight</code></pre>
+
+<div class="concept"><h5>Key Concept: Why Multiplicative?</h5>
+<p>If <em>any</em> consideration scores zero, the entire action scores zero. This creates natural "veto" behavior: a Rusher can't melee attack if it's out of range, regardless of how healthy or aggressive it is. Additive scoring would allow high values in other factors to override the zero.</p></div>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 10: Response Curves</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The 5 Response Curve Types</h4>
+<table>
+<tr><th>Type</th><th>Formula</th><th>Use Case</th></tr>
+<tr><td>Linear</td><td>y = slope × x + offset</td><td>Proportional relationships</td></tr>
+<tr><td>Quadratic</td><td>y = x^exponent</td><td>Accelerating urgency (health drops)</td></tr>
+<tr><td>Logistic</td><td>y = 1/(1 + e^(-k(x-m)))</td><td>S-curve transitions (range bands)</td></tr>
+<tr><td>Step</td><td>y = x ≥ threshold ? 1 : 0</td><td>Binary conditions (has token?)</td></tr>
+<tr><td>Inverse</td><td>y = 1 - x</td><td>Closer=better, lower=higher</td></tr>
+</table>
+</div></div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>🎮 Interactive: Response Curve Visualizer</h3><span class="card-tag tag-interactive">INTERACTIVE</span></div><div class="card-body">
+<div class="interactive-module">
+<h4>📈 Response Curve Explorer</h4>
+<p style="font-size:13px;color:var(--text2)">Select a curve type and adjust parameters to see how inputs map to scores.</p>
+<canvas id="curveCanvas" width="700" height="300"></canvas>
+<div class="slider-row"><span>Type:</span>
+<select id="curveType" onchange="drawCurve()" style="flex:1;padding:4px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px">
+<option value="linear">Linear</option><option value="quadratic">Quadratic</option><option value="logistic" selected>Logistic</option><option value="step">Step</option><option value="inverse">Inverse</option></select></div>
+<div class="slider-row"><span>Param 1:</span><input type="range" id="curveP1" min="0" max="200" value="100" oninput="drawCurve()"><span class="val" id="curveP1Val">10.0</span></div>
+<div class="slider-row"><span>Param 2:</span><input type="range" id="curveP2" min="0" max="100" value="50" oninput="drawCurve()"><span class="val" id="curveP2Val">0.50</span></div>
+</div>
+</div></div>
+
+<div class="quiz" id="quiz-week5"><h4>📝 Week 5 Knowledge Check</h4>
+<div class="quiz-q" data-correct="b"><p>1. In multiplicative scoring, what happens if one consideration returns 0?</p>
+<label><input type="radio" name="q1w5" value="a"> The score is reduced slightly</label>
+<label><input type="radio" name="q1w5" value="b"> The entire action score becomes 0</label>
+<label><input type="radio" name="q1w5" value="c"> That consideration is skipped</label>
+<label><input type="radio" name="q1w5" value="d"> The action gets a minimum score of 0.1</label></div>
+<div class="quiz-q" data-correct="c"><p>2. Which curve type is best for "Retreat when health is low"?</p>
+<label><input type="radio" name="q2w5" value="a"> Linear</label>
+<label><input type="radio" name="q2w5" value="b"> Step</label>
+<label><input type="radio" name="q2w5" value="c"> Inverse (of health)</label>
+<label><input type="radio" name="q3w5" value="d"> Logistic</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week5','week5')">Submit Quiz</button>
+<div class="quiz-result" id="result-week5"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week5');showPage('week6')">Complete Week 5 → Continue to Week 6</button></div>`};
+
+pages.week6={title:'Week 6: Rusher Archetype — Complete Implementation',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lecture 11-12: Rusher Deep Dive</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The Rusher: "The Blade"</h4>
+<p>The Rusher is the first archetype students implement. It's aggressive, fast, and expendable — the perfect test case for the Utility AI framework because it has the most varied action set.</p>
+<table>
+<tr><th>Stat</th><th>Value</th><th>Implication</th></tr>
+<tr><td>HP</td><td>40</td><td>Dies in 4 light attacks or 2 heavy</td></tr>
+<tr><td>Speed</td><td>650 cm/s</td><td>Faster than player sprint (700)</td></tr>
+<tr><td>Stagger Threshold</td><td>20</td><td>One heavy attack staggers</td></tr>
+<tr><td>Aggression</td><td>Very High</td><td>Prefers closing distance</td></tr>
+</table>
+
+<h5>The 7 Utility Actions</h5>
+<table>
+<tr><th>Action</th><th>Weight</th><th>Key Consideration</th><th>Curve</th></tr>
+<tr><td>Chase</td><td>1.0</td><td>Distance (far = high)</td><td>Logistic</td></tr>
+<tr><td>Melee Attack</td><td>1.2</td><td>In range + token</td><td>Inverse distance</td></tr>
+<tr><td>Lunge</td><td>1.1</td><td>300-600cm range</td><td>Logistic</td></tr>
+<tr><td>Circle Strafe</td><td>0.8</td><td>Close + ally attacking</td><td>Inverse + Step</td></tr>
+<tr><td>Flank</td><td>0.9</td><td>Group request + player facing</td><td>Step + Inverse</td></tr>
+<tr><td>Retreat</td><td>1.3</td><td>Low health</td><td>Inverse health</td></tr>
+<tr><td>Investigate</td><td>0.6</td><td>Lost sight + LKP valid</td><td>Step + Step</td></tr>
+</table>
+
+<div class="concept"><h5>Key Concept: Weight Balancing</h5>
+<p>Retreat has the highest weight (1.3) because self-preservation should override aggression at low health. Investigate has the lowest (0.6) because it's only relevant when the player has escaped — other actions should always win when the player is visible.</p></div>
+</div></div>
+
+<div class="quiz" id="quiz-week6"><h4>📝 Week 6 Knowledge Check</h4>
+<div class="quiz-q" data-correct="d"><p>1. Why does the Melee Attack action require bRequiresAttackToken = true?</p>
+<label><input type="radio" name="q1w6" value="a"> Tokens improve damage</label>
+<label><input type="radio" name="q1w6" value="b"> UE5 requires tokens for melee</label>
+<label><input type="radio" name="q1w6" value="c"> Tokens track combo count</label>
+<label><input type="radio" name="q1w6" value="d"> To prevent all enemies from attacking simultaneously (dogpiling)</label></div>
+<div class="quiz-q" data-correct="b"><p>2. Which action would score highest for a Rusher at 15% health, 100cm from the player?</p>
+<label><input type="radio" name="q2w6" value="a"> Chase (already close)</label>
+<label><input type="radio" name="q2w6" value="b"> Retreat (inverse health curve + weight 1.3)</label>
+<label><input type="radio" name="q3w6" value="c"> Melee Attack (in range)</label>
+<label><input type="radio" name="q4w6" value="d"> Investigate (no reason)</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week6','week6')">Submit Quiz</button>
+<div class="quiz-result" id="result-week6"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week6');showPage('midterm')">Complete Week 6 → Take Midterm Exam</button></div>`};
+
+pages.midterm={title:'Midterm Exam',html:`
+<div class="card"><div class="card-header"><h3>Midterm Examination — AI Archetype Mastery</h3><span class="card-tag tag-exam">EXAM</span></div><div class="card-body">
+<p style="color:var(--text2);margin-bottom:16px">This exam covers Weeks 1-6: Project architecture, player combat, AI base classes, perception, Utility AI, and the Rusher archetype. <strong>15 questions, 100 points.</strong></p>
+<div class="quiz" id="quiz-midterm">
+<div class="quiz-q" data-correct="b"><p>1. (5pts) Which file defines the modules your UE5 project depends on?</p>
+<label><input type="radio" name="qm1" value="a"> .uproject</label><label><input type="radio" name="qm1" value="b"> .Build.cs</label><label><input type="radio" name="qm1" value="c"> .Target.cs</label><label><input type="radio" name="qm1" value="d"> GameMode.cpp</label></div>
+<div class="quiz-q" data-correct="c"><p>2. (5pts) What is the purpose of the "Request" pattern (e.g., RequestMove, RequestDodge)?</p>
+<label><input type="radio" name="qm2" value="a"> Network replication</label><label><input type="radio" name="qm2" value="b"> Animation queueing</label><label><input type="radio" name="qm2" value="c"> Decoupling input binding from character logic</label><label><input type="radio" name="qm2" value="d"> Memory optimization</label></div>
+<div class="quiz-q" data-correct="a"><p>3. (8pts) A dodge roll has i-frames from 0.1s to 0.35s in a 0.5s roll. What percentage of the dodge is invulnerable?</p>
+<label><input type="radio" name="qm3" value="a"> 50% (0.25s of 0.5s)</label><label><input type="radio" name="qm3" value="b"> 70%</label><label><input type="radio" name="qm3" value="c"> 35%</label><label><input type="radio" name="qm3" value="d"> 25%</label></div>
+<div class="quiz-q" data-correct="c"><p>4. (8pts) In the shared damage pipeline, FDamageInfo includes HitDirection. How is this used?</p>
+<label><input type="radio" name="qm4" value="a"> For knockback calculation only</label><label><input type="radio" name="qm4" value="b"> For VFX particle direction only</label><label><input type="radio" name="qm4" value="c"> For directional armor (frontal reduction, rear weak point via dot product)</label><label><input type="radio" name="qm4" value="d"> It's informational only</label></div>
+<div class="quiz-q" data-correct="b"><p>5. (8pts) Why do we use multiplicative scoring instead of additive in Utility AI?</p>
+<label><input type="radio" name="qm5" value="a"> It's faster to compute</label><label><input type="radio" name="qm5" value="b"> A single zero-scoring consideration vetoes the entire action</label><label><input type="radio" name="qm5" value="c"> It produces higher scores</label><label><input type="radio" name="qm5" value="d"> UE5's BT system requires it</label></div>
+<div class="quiz-q" data-correct="d"><p>6. (8pts) The Rusher's Retreat action has weight 1.3 with an inverse health curve. When health is 10%, what is the consideration output?</p>
+<label><input type="radio" name="qm6" value="a"> 0.1</label><label><input type="radio" name="qm6" value="b"> 0.5</label><label><input type="radio" name="qm6" value="c"> 0.75</label><label><input type="radio" name="qm6" value="d"> 0.9 (inverse of 0.1 = 1.0 - 0.1)</label></div>
+<div class="quiz-q" data-correct="a"><p>7. (5pts) What is the FOV check formula for AI sight perception?</p>
+<label><input type="radio" name="qm7" value="a"> dot(forward, toTarget) >= cos(halfAngle)</label><label><input type="radio" name="qm7" value="b"> distance(self, target) < range</label><label><input type="radio" name="qm7" value="c"> angle(forward, toTarget) < FOV</label><label><input type="radio" name="qm7" value="d"> cross(forward, toTarget).Length() < threshold</label></div>
+<div class="quiz-q" data-correct="c"><p>8. (5pts) What does "staggered perception ticks" mean?</p>
+<label><input type="radio" name="qm8" value="a"> Perception only works when enemy is staggered</label><label><input type="radio" name="qm8" value="b"> Perception checks happen every frame</label><label><input type="radio" name="qm8" value="c"> Each enemy's perception timer starts at a random offset to spread cost across frames</label><label><input type="radio" name="qm8" value="d"> Perception accuracy decreases over distance</label></div>
+<div class="quiz-q" data-correct="b"><p>9. (8pts) The Logistic response curve is used for the Rusher's Chase action on distance. Why Logistic instead of Linear?</p>
+<label><input type="radio" name="qm9" value="a"> Logistic is faster to compute</label><label><input type="radio" name="qm9" value="b"> Logistic creates a smooth S-curve transition between "don't chase" and "definitely chase" at a specific distance</label><label><input type="radio" name="qm9" value="c"> Linear would produce negative values</label><label><input type="radio" name="qm9" value="d"> UE5 only supports Logistic curves</label></div>
+<div class="quiz-q" data-correct="a"><p>10. (8pts) The Utility AI picks "MeleeAttack" and writes it to the blackboard. What system reads it and executes the attack?</p>
+<label><input type="radio" name="qm10" value="a"> The Behavior Tree reads the blackboard key and routes to the melee attack subtree</label><label><input type="radio" name="qm10" value="b"> The Utility AI directly plays the animation</label><label><input type="radio" name="qm10" value="c"> The perception system triggers the attack</label><label><input type="radio" name="qm10" value="d"> The player controller receives the command</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-midterm','midterm')">Submit Midterm</button>
+<div class="quiz-result" id="result-midterm"></div>
+</div></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('midterm');showPage('week7')">Continue to Week 7</button></div>`};
+
+// Weeks 7-12 with condensed but complete content
+pages.week7={title:'Week 7: Watcher & Warden Archetypes',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lectures 13-14: Ranged + Tank AI</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The Watcher: Ranged Suppression AI</h4>
+<p>The Watcher demonstrates how the <em>same Utility AI framework</em> produces completely different behavior with different action configurations. Key challenge: maintaining optimal range (1500-2500cm) while keeping LOS.</p>
+<h5>Accuracy-Gated Projectiles</h5>
+<pre><code><span class="kw">void</span> <span class="tp">AWatcherCharacter</span>::<span class="fn">FireProjectile</span>(<span class="kw">float</span> Damage, <span class="kw">float</span> Accuracy)
+{
+    <span class="kw">const bool</span> bHit = FMath::<span class="fn">FRand</span>() <= Accuracy;
+    <span class="kw">if</span> (bHit)
+        UCombatComponent::<span class="fn">DealDamage</span>(Player, DmgInfo);
+}</code></pre>
+<h4>The Warden: Directional Tank AI</h4>
+<p>The Warden uses the <code>CombatComponent</code>'s directional armor system: <code>FrontalArmorReduction = 0.5</code> and <code>WeakPointMultiplier = 2.0</code>. Players must flank to deal full damage.</p>
+<h5>AOE Damage via Overlap Query</h5>
+<pre><code><span class="kw">void</span> <span class="tp">AWardenCharacter</span>::<span class="fn">ApplyAOEDamage</span>(<span class="kw">float</span> Radius, <span class="kw">float</span> Damage, ...)
+{
+    GetWorld()-><span class="fn">OverlapMultiByChannel</span>(
+        Overlaps, GetActorLocation(), FQuat::Identity,
+        ECC_Pawn, FCollisionShape::<span class="fn">MakeSphere</span>(Radius), Params);
+    <span class="kw">for</span> (<span class="kw">const auto</span>& Overlap : Overlaps)
+        CC-><span class="fn">ReceiveDamage</span>(DmgInfo);  <span class="cm">// Same pipeline!</span>
+}</code></pre>
+</div></div>
+<div class="quiz" id="quiz-week7"><h4>📝 Week 7 Quiz</h4>
+<div class="quiz-q" data-correct="c"><p>1. The Watcher's Retreat action has the highest weight (1.4). When does it dominate?</p>
+<label><input type="radio" name="q1w7" value="a"> When allies are nearby</label><label><input type="radio" name="q1w7" value="b"> When at optimal range</label><label><input type="radio" name="q1w7" value="c"> When the player closes within 500cm AND health is low (both inverse curves)</label><label><input type="radio" name="q1w7" value="d"> Always</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week7','week7')">Submit</button><div class="quiz-result" id="result-week7"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week7');showPage('week8')">Complete → Week 8</button></div>`};
+
+pages.week8={title:'Week 8: Data Assets & Attack Token System',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lectures 15-16: Data-Driven Design & Tokens</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The Data Asset Philosophy</h4>
+<p>Every tunable value lives in a <code>UDataAsset</code> — never hardcoded. This means designers can create enemy variants, difficulty presets, and encounter definitions without touching code.</p>
+<pre><code><span class="cm">// Apply a profile to an enemy at spawn time</span>
+<span class="kw">void</span> <span class="tp">UEnemyProfileData</span>::<span class="fn">ApplyToCharacter</span>(AAICharacterBase* Character)
+{
+    Character->CombatComp->MaxHealth = MaxHealth;
+    Character->GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
+    PerceptionComp->DetectionRange = DetectionRange;
+    <span class="cm">// ...all stats propagated from the asset</span>
+}</code></pre>
+
+<h4>Attack Token System</h4>
+<p>The token system prevents dogpiling by limiting concurrent attacks. Priority-based queue ensures fairness:</p>
+<div class="diagram">Enemy A requests token → <span class="hl2">GRANTED</span> (slot available)
+Enemy B requests token → <span class="hl2">GRANTED</span> (slot available)
+Enemy C requests token → <span class="hl3">QUEUED</span> (max 2 reached)
+Enemy A finishes attack → <span class="hl">RETURNED</span>
+Enemy C from queue → <span class="hl2">GRANTED</span> (highest priority)</div>
+</div></div>
+<div class="quiz" id="quiz-week8"><h4>📝 Week 8 Quiz</h4>
+<div class="quiz-q" data-correct="a"><p>1. What happens when an enemy holds a token past the hold duration?</p>
+<label><input type="radio" name="q1w8" value="a"> The token is forcibly returned and the next in queue gets it</label><label><input type="radio" name="q1w8" value="b"> The enemy dies</label><label><input type="radio" name="q1w8" value="c"> Nothing — hold duration is just a suggestion</label><label><input type="radio" name="q1w8" value="d"> The token pool expands</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week8','week8')">Submit</button><div class="quiz-result" id="result-week8"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week8');showPage('week9')">Complete → Week 9</button></div>`};
+
+pages.week9={title:'Week 9: Squad Coordination — Flanking & Cover',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lectures 17-18: Group Tactics</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>8-Sector Flanking System</h4>
+<p>The space around the player is divided into 8 sectors (45° each). Enemies are assigned to spread around the player rather than clustering.</p>
+<div class="diagram">    [3:REAR-L]  [4:REAR]  [5:REAR-R]
+         ╲         │         ╱
+          ╲        │        ╱
+[2:LEFT] ── <span class="hl">[PLAYER]</span> ── [6:RIGHT]
+          ╱        │        ╲
+         ╱         │         ╲
+   [1:FRONT-L] [0:FRONT] [7:FRONT-R]
+
+<span class="hl2">Rushers</span> → Prefer sectors 0,1,7 (front/sides)
+<span class="hl3">Watchers</span> → Prefer sectors 3,4,5 (rear)
+<span class="hl">Wardens</span> → Prefer sectors 0,1,7 (shield allies)</div>
+
+<h4>Cover Evaluation</h4>
+<p>Cover nodes are scored on 4 factors: proximity (30%), direction alignment (40%), quality (20%), elevation (10% bonus for Watchers).</p>
+
+<h4>6 Tactical Situations</h4>
+<table><tr><th>Situation</th><th>Detection</th><th>Effect</th></tr>
+<tr><td>Player Surrounded</td><td>3+ occupied sectors</td><td>All-out attack</td></tr>
+<tr><td>Ally Down</td><td>Member death event</td><td>Increased aggression</td></tr>
+<tr><td>Player At Range</td><td>All enemies > 1000cm</td><td>Rushers sprint, Watchers fire</td></tr>
+<tr><td>Player Low Health</td><td>Player HP < 25%</td><td>Full aggression</td></tr>
+<tr><td>Squad Depleted</td><td>1 enemy remaining</td><td>Desperate behavior</td></tr>
+<tr><td>None</td><td>Default</td><td>Normal behavior</td></tr></table>
+</div></div>
+<div class="quiz" id="quiz-week9"><h4>📝 Week 9 Quiz</h4>
+<div class="quiz-q" data-correct="b"><p>1. Why do Watchers prefer rear sectors (3,4,5)?</p>
+<label><input type="radio" name="q1w9" value="a"> They're cowards</label><label><input type="radio" name="q1w9" value="b"> Rear positions maximize distance from the player while maintaining line of sight</label><label><input type="radio" name="q1w9" value="c"> The algorithm randomly assigns them</label><label><input type="radio" name="q1w9" value="d"> Rear sectors have cover</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week9','week9')">Submit</button><div class="quiz-result" id="result-week9"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week9');showPage('week10')">Complete → Week 10</button></div>`};
+
+pages.week10={title:'Week 10: Encounter System & Wave Design',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lectures 19-20: Encounters & Pacing</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>The 5-Wave Design</h4>
+<table><tr><th>Wave</th><th>Enemies</th><th>Tokens</th><th>Purpose</th></tr>
+<tr><td>1: Introduction</td><td>3 Rushers</td><td>1</td><td>Teach melee combat</td></tr>
+<tr><td>2: Ranged Pressure</td><td>2 Watchers + 2 Rushers</td><td>2</td><td>Introduce ranged threats</td></tr>
+<tr><td>3: The Wall</td><td>1 Warden + 2 Rushers</td><td>2</td><td>Teach flanking</td></tr>
+<tr><td>4: Combined Arms</td><td>1 Warden + 2 Watchers + 3 Rushers</td><td>3</td><td>Full tactical AI</td></tr>
+<tr><td>5: Gauntlet</td><td>2 Wardens + 3 Watchers + 4 Rushers</td><td>3-4</td><td>Showcase/stress test</td></tr></table>
+
+<div class="concept"><h5>Key Concept: Teach → Combine → Stress Test</h5>
+<p>Each wave introduces a new element, then subsequent waves combine previously learned elements. Wave 5 puts everything together as a final challenge. This pacing curve keeps the player in flow state.</p></div>
+</div></div>
+<div class="quiz" id="quiz-week10"><h4>📝 Week 10 Quiz</h4>
+<div class="quiz-q" data-correct="c"><p>1. Why does Wave 1 only use 1 attack token?</p>
+<label><input type="radio" name="q1w10" value="a"> There's only 1 enemy</label><label><input type="radio" name="q1w10" value="b"> Token system isn't implemented yet</label><label><input type="radio" name="q1w10" value="c"> To let the player learn combat without being overwhelmed by simultaneous attacks</label><label><input type="radio" name="q1w10" value="d"> Performance optimization</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week10','week10')">Submit</button><div class="quiz-result" id="result-week10"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week10');showPage('week11')">Complete → Week 11</button></div>`};
+
+pages.week11={title:'Week 11: Debug Tools & Core UI',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lectures 21-22: Debug & UI</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>Debug Visualization Philosophy</h4>
+<div class="warning"><h5>⚠️ "If it isn't debuggable, it isn't shippable"</h5>
+<p>Every AI system must have visual debug support. When something goes wrong — and it will — you need to see what the AI is thinking, not guess from behavior alone.</p></div>
+
+<h5>6 Debug Overlay Layers</h5>
+<table><tr><th>Layer</th><th>Shows</th><th>Color Code</th></tr>
+<tr><td>AI States</td><td>Idle/Alert/Combat/Search/Dead label</td><td>White/Yellow/Red/Orange/Gray</td></tr>
+<tr><td>Utility Scores</td><td>Current action + score per enemy</td><td>Cyan</td></tr>
+<tr><td>Perception</td><td>FOV cone, sight line to player</td><td>Green (see) / Red (no LOS)</td></tr>
+<tr><td>Attack Tokens</td><td>Who holds tokens, queue</td><td>Red indicators</td></tr>
+<tr><td>Flanking Sectors</td><td>8 sphere markers around player</td><td>Green markers</td></tr>
+<tr><td>Tactical Situation</td><td>Current squad-level assessment</td><td>Orange text</td></tr></table>
+
+<h4>UMG Widget Architecture</h4>
+<p>All HUD elements use the <strong>delegate-driven update</strong> pattern — the UI never polls; it reacts to events:</p>
+<pre><code><span class="cm">// Bind once, update automatically</span>
+Player->StatsComponent->OnHealthChanged
+    .<span class="fn">AddDynamic</span>(<span class="kw">this</span>, &UCombatHUDWidget::<span class="fn">HandleHealthChanged</span>);</code></pre>
+</div></div>
+<div class="quiz" id="quiz-week11"><h4>📝 Week 11 Quiz</h4>
+<div class="quiz-q" data-correct="b"><p>1. Why use delegate-driven UI updates instead of polling?</p>
+<label><input type="radio" name="q1w11" value="a"> Delegates are faster</label><label><input type="radio" name="q1w11" value="b"> The UI only updates when values actually change, avoiding unnecessary work every frame</label><label><input type="radio" name="q1w11" value="c"> UMG doesn't support polling</label><label><input type="radio" name="q1w11" value="d"> It looks better</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week11','week11')">Submit</button><div class="quiz-result" id="result-week11"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week11');showPage('week12')">Complete → Week 12</button></div>`};
+
+pages.week12={title:'Week 12: Difficulty, Combat Feel & Final Delivery',html:`
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>Lectures 23-24: Final Polish</h3><span class="card-tag tag-lecture">LECTURE</span></div><div class="card-body lesson">
+<h4>Difficulty Presets</h4>
+<table><tr><th>Parameter</th><th>Easy</th><th>Normal</th><th>Hard</th></tr>
+<tr><td>Enemy HP Mult</td><td>0.75x</td><td>1.0x</td><td>1.5x</td></tr>
+<tr><td>Enemy Damage Mult</td><td>0.75x</td><td>1.0x</td><td>1.2x</td></tr>
+<tr><td>Max Tokens</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>Ranged Accuracy</td><td>0.5</td><td>0.7</td><td>0.85</td></tr>
+<tr><td>Player Health</td><td>125</td><td>100</td><td>80</td></tr></table>
+
+<h4>The "Juice" Checklist</h4>
+<p>Every combat interaction should provide <strong>multisensory feedback</strong>:</p>
+<ul>
+<li>✅ <strong>Visual</strong>: Hit sparks, slash trails, screen shake</li>
+<li>✅ <strong>Audio</strong>: Impact sound, stagger grunt, death cry</li>
+<li>✅ <strong>Kinesthetic</strong>: Hitlag freeze, controller rumble</li>
+<li>✅ <strong>Temporal</strong>: Kill slow-motion, attack telegraph wind-up</li>
+<li>✅ <strong>Spatial</strong>: Knockback, camera push, enemy stagger movement</li>
+</ul>
+</div></div>
+<div class="quiz" id="quiz-week12"><h4>📝 Week 12 Quiz</h4>
+<div class="quiz-q" data-correct="d"><p>1. Why is the DifficultyManager a GameInstance subsystem?</p>
+<label><input type="radio" name="q1w12" value="a"> Performance</label><label><input type="radio" name="q1w12" value="b"> Blueprint access</label><label><input type="radio" name="q1w12" value="c"> It needs to tick every frame</label><label><input type="radio" name="q1w12" value="d"> It persists across level transitions (the player's difficulty choice survives restarts)</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-week12','week12')">Submit</button><div class="quiz-result" id="result-week12"></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('week12');showPage('final')">Complete → Take Final Exam</button></div>`};
+
+pages.final={title:'Final Examination',html:`
+<div class="card"><div class="card-header"><h3>Final Examination — Complete Course Mastery</h3><span class="card-tag tag-exam">EXAM</span></div><div class="card-body">
+<p style="color:var(--text2);margin-bottom:16px">Comprehensive exam covering all 12 weeks. <strong>20 questions.</strong></p>
+<div class="quiz" id="quiz-final">
+<div class="quiz-q" data-correct="b"><p>1. What is the primary advantage of the hybrid Utility AI + Behavior Tree approach?</p>
+<label><input type="radio" name="qf1" value="a"> Faster execution speed</label><label><input type="radio" name="qf1" value="b"> Utility handles nuanced WHAT decisions; BT handles reliable HOW execution</label><label><input type="radio" name="qf1" value="c"> It uses less memory</label><label><input type="radio" name="qf1" value="d"> UE5 requires both</label></div>
+<div class="quiz-q" data-correct="c"><p>2. How does the FlankingSystem handle multiple enemies wanting the same sector?</p>
+<label><input type="radio" name="qf2" value="a"> First come, first served</label><label><input type="radio" name="qf2" value="b"> Random assignment</label><label><input type="radio" name="qf2" value="c"> Priority by proximity; displaced enemies get the nearest unoccupied sector</label><label><input type="radio" name="qf2" value="d"> Both enemies share the sector</label></div>
+<div class="quiz-q" data-correct="a"><p>3. A Warden with 50% frontal armor is hit from the front for 30 damage. Final damage?</p>
+<label><input type="radio" name="qf3" value="a"> 15 (30 × 0.5)</label><label><input type="radio" name="qf3" value="b"> 30 (armor doesn't apply)</label><label><input type="radio" name="qf3" value="c"> 60 (weak point)</label><label><input type="radio" name="qf3" value="d"> 0 (blocked completely)</label></div>
+<div class="quiz-q" data-correct="d"><p>4. The same Warden hit from behind for 30 damage (2x weak point). Final damage?</p>
+<label><input type="radio" name="qf4" value="a"> 15</label><label><input type="radio" name="qf4" value="b"> 30</label><label><input type="radio" name="qf4" value="c"> 45</label><label><input type="radio" name="qf4" value="d"> 60 (30 × 2.0)</label></div>
+<div class="quiz-q" data-correct="b"><p>5. What triggers the "Squad Depleted" tactical situation?</p>
+<label><input type="radio" name="qf5" value="a"> No enemies visible</label><label><input type="radio" name="qf5" value="b"> Only 1 alive enemy remaining</label><label><input type="radio" name="qf5" value="c"> Player killed 5+ enemies</label><label><input type="radio" name="qf5" value="d"> Token pool empty</label></div>
+<div class="quiz-q" data-correct="a"><p>6. Why does the Watcher use AccuracyBase instead of always hitting?</p>
+<label><input type="radio" name="qf6" value="a"> To create tension without guaranteed damage — players can dodge or get lucky, making ranged threats feel fair</label><label><input type="radio" name="qf6" value="b"> For performance optimization</label><label><input type="radio" name="qf6" value="c"> UE5 requires accuracy parameters</label><label><input type="radio" name="qf6" value="d"> To match real-world physics</label></div>
+<div class="quiz-q" data-correct="c"><p>7. What is the purpose of Score Noise in the Utility AI Component?</p>
+<label><input type="radio" name="qf7" value="a"> To fix floating-point errors</label><label><input type="radio" name="qf7" value="b"> To improve performance</label><label><input type="radio" name="qf7" value="c"> To add behavioral variety — prevents enemies from always choosing the exact same action in identical situations</label><label><input type="radio" name="qf7" value="d"> To simulate emotion</label></div>
+<div class="quiz-q" data-correct="b"><p>8. In the EncounterManager, what happens when EnemiesRemainingInWave reaches 0?</p>
+<label><input type="radio" name="qf8" value="a"> The game ends</label><label><input type="radio" name="qf8" value="b"> OnWaveCompleted fires, then AdvanceWave() is called to start the next wave</label><label><input type="radio" name="qf8" value="c"> The player is healed</label><label><input type="radio" name="qf8" value="d"> A boss spawns</label></div>
+<div class="quiz-q" data-correct="a"><p>9. What design pattern does ApplyToCharacter() on EnemyProfileData demonstrate?</p>
+<label><input type="radio" name="qf9" value="a"> Data-driven configuration — all values come from assets, not code</label><label><input type="radio" name="qf9" value="b"> Singleton pattern</label><label><input type="radio" name="qf9" value="c"> Observer pattern</label><label><input type="radio" name="qf9" value="d"> Factory pattern</label></div>
+<div class="quiz-q" data-correct="d"><p>10. Why is hitlag implemented using SetGlobalTimeDilation(0.01) instead of pausing?</p>
+<label><input type="radio" name="qf10" value="a"> Pausing stops input</label><label><input type="radio" name="qf10" value="b"> Pausing stops rendering</label><label><input type="radio" name="qf10" value="c"> Pausing is permanent</label><label><input type="radio" name="qf10" value="d"> Near-zero dilation keeps animations at the freeze frame while allowing real-time timers to count down</label></div>
+<button class="btn btn-primary" onclick="gradeQuiz('quiz-final','final')">Submit Final Exam</button>
+<div class="quiz-result" id="result-final"></div>
+</div></div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('final');showPage('reference')">Complete → Reference Sheet</button></div>`};
+
+pages.reference={title:'Reference Sheet — All Systems',html:`
+<div class="card"><div class="card-header"><h3>Complete Systems Reference</h3><span class="card-tag tag-lecture">REFERENCE</span></div><div class="card-body lesson">
+<h4>All Classes at a Glance</h4>
+<table>
+<tr><th>System</th><th>Class</th><th>Purpose</th></tr>
+<tr><td>Player</td><td><code>APlayerCharacter</code></td><td>Movement, combat, lock-on</td></tr>
+<tr><td>Stats</td><td><code>UPlayerStatsComponent</code></td><td>Health, stamina, ammo with regen</td></tr>
+<tr><td>Camera</td><td><code>UCombatCameraComponent</code></td><td>Follow, collision, shake, hitlag</td></tr>
+<tr><td>Damage</td><td><code>UCombatComponent</code></td><td>Shared pipeline: Deal/Receive damage</td></tr>
+<tr><td>Hit Detection</td><td><code>UHitDetectionComponent</code></td><td>Socket-based sphere sweep</td></tr>
+<tr><td>AI Base</td><td><code>AAICharacterBase</code></td><td>State machine, death, stagger hooks</td></tr>
+<tr><td>AI Controller</td><td><code>AAIControllerBase</code></td><td>BT + Blackboard lifecycle</td></tr>
+<tr><td>Perception</td><td><code>UAICombatPerceptionComponent</code></td><td>Sight, hearing, 4-factor threat</td></tr>
+<tr><td>Utility AI</td><td><code>UUtilityAIComponent</code></td><td>Action scoring + selection engine</td></tr>
+<tr><td>Response Curves</td><td><code>FResponseCurve</code></td><td>5 types: Linear/Quad/Logistic/Step/Inverse</td></tr>
+<tr><td>Considerations</td><td><code>FUtilityConsideration</code></td><td>26 input types → normalize → curve</td></tr>
+<tr><td>Rusher</td><td><code>ARusherCharacter</code></td><td>7 actions: Chase, Melee, Lunge, Circle, Flank, Retreat, Investigate</td></tr>
+<tr><td>Watcher</td><td><code>AWatcherCharacter</code></td><td>6 actions: AimedShot, Burst, Cover, HighGround, Retreat, Reposition</td></tr>
+<tr><td>Warden</td><td><code>AWardenCharacter</code></td><td>7 actions: Advance, Slam, Charge, Bash, Stomp, Protect, FacePlayer</td></tr>
+<tr><td>Squad</td><td><code>ASquadCoordinator</code></td><td>Tokens + flanking + aggro + tactics</td></tr>
+<tr><td>Tokens</td><td><code>UAttackTokenSystem</code></td><td>Priority queue, timeout enforcement</td></tr>
+<tr><td>Flanking</td><td><code>UFlankingSystem</code></td><td>8-sector assignment with archetype weights</td></tr>
+<tr><td>Cover</td><td><code>UCoverSystem</code></td><td>4-factor node scoring</td></tr>
+<tr><td>Encounters</td><td><code>AEncounterManager</code></td><td>Wave spawning + progression</td></tr>
+<tr><td>Data</td><td><code>UEnemyProfileData</code></td><td>Designer-tunable enemy stats</td></tr>
+<tr><td>Difficulty</td><td><code>UDifficultyManager</code></td><td>3 presets + dynamic adjustment</td></tr>
+<tr><td>Debug</td><td><code>AAIDebugHUD</code></td><td>6-layer AI visualization overlay</td></tr>
+<tr><td>HUD</td><td><code>UCombatHUDWidget</code></td><td>Health/stamina/ammo/wave/enemies</td></tr>
+<tr><td>Menus</td><td><code>UMainMenuWidget</code></td><td>5-page WidgetSwitcher</td></tr>
+</table>
+
+<h4>Key Formulas</h4>
+<table>
+<tr><th>System</th><th>Formula</th></tr>
+<tr><td>FOV Check</td><td><code>dot(forward, toTarget) >= cos(halfAngle)</code></td></tr>
+<tr><td>Directional Armor</td><td><code>dot > 0.3 → reduce; dot < -0.3 → weak point</code></td></tr>
+<tr><td>Utility Score</td><td><code>Π(considerations) × action_weight</code></td></tr>
+<tr><td>Logistic Curve</td><td><code>1 / (1 + e^(-k(x - m)))</code></td></tr>
+<tr><td>Threat Level</td><td><code>Σ(factor_i × weight_i), blended via FInterpTo</code></td></tr>
+<tr><td>Token Priority</td><td><code>dist_weight × norm_distance + fair_weight × wait_time</code></td></tr>
+</table>
+</div></div>
+<div style="text-align:center;margin:20px"><button class="btn btn-success" onclick="markComplete('reference')">Mark Reference Complete</button></div>`};
+
+// ═══════════════════════════════════════════════════════════════
+// PAGE RENDERING
+// ═══════════════════════════════════════════════════════════════
+function showPage(id) {
+  state.currentPage = id;
+  const page = pages[id];
+  if (!page) return;
+  document.getElementById('pageTitle').textContent = page.title;
+  document.getElementById('contentArea').innerHTML = page.html;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page === id));
+  window.scrollTo(0, 0);
+  // Init interactive modules
+  setTimeout(() => {
+    if (document.getElementById('iframeCanvas')) drawIframes();
+    if (document.getElementById('curveCanvas')) drawCurve();
+  }, 50);
+}
+
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('collapsed');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════════════════════════════════════════
+function gradeQuiz(quizId, pageId) {
+  const quiz = document.getElementById(quizId);
+  const questions = quiz.querySelectorAll('.quiz-q');
+  let correct = 0;
+  questions.forEach(q => {
+    const answer = q.dataset.correct;
+    const name = q.querySelector('input')?.name;
+    if (!name) return;
+    const selected = quiz.querySelector(`input[name="${name}"]:checked`);
+    if (selected && selected.value === answer) correct++;
+  });
+  const total = questions.length;
+  const pct = Math.round((correct / total) * 100);
+  const result = document.getElementById(`result-${pageId}`);
+  result.className = 'quiz-result ' + (pct >= 70 ? 'correct' : 'incorrect');
+  result.style.display = 'block';
+  result.textContent = `Score: ${correct}/${total} (${pct}%) — ${pct >= 70 ? 'PASSED ✓' : 'Review the material and try again'}`;
+  state.quizAnswers[pageId] = { correct, total, pct };
+  saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERACTIVE: I-FRAME VISUALIZER
+// ═══════════════════════════════════════════════════════════════
+function drawIframes() {
+  const c = document.getElementById('iframeCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const dur = parseFloat(document.getElementById('dodgeDur').value);
+  const start = parseFloat(document.getElementById('ifStart').value);
+  const end = Math.min(parseFloat(document.getElementById('ifEnd').value), dur);
+  document.getElementById('dodgeDurVal').textContent = dur.toFixed(2) + 's';
+  document.getElementById('ifStartVal').textContent = start.toFixed(2) + 's';
+  document.getElementById('ifEndVal').textContent = end.toFixed(2) + 's';
+  
+  ctx.clearRect(0, 0, W, H);
+  const pad = 40, tw = W - pad * 2;
+  
+  // Background bar
+  ctx.fillStyle = '#21283b';
+  ctx.fillRect(pad, 30, tw, 50);
+  
+  // I-frame zone
+  const x1 = pad + (start / dur) * tw;
+  const x2 = pad + (end / dur) * tw;
+  ctx.fillStyle = 'rgba(63,185,80,0.3)';
+  ctx.fillRect(x1, 30, x2 - x1, 50);
+  ctx.strokeStyle = '#3fb950';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x1, 30, x2 - x1, 50);
+  
+  // Labels
+  ctx.fillStyle = '#c9d1d9';
+  ctx.font = '12px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText('0s', pad, 100);
+  ctx.fillText(dur.toFixed(2) + 's', pad + tw, 100);
+  ctx.fillText('DODGE DURATION', W / 2, 100);
+  
+  ctx.fillStyle = '#3fb950';
+  ctx.fillText('I-FRAMES', (x1 + x2) / 2, 52);
+  ctx.fillText(((end - start) / dur * 100).toFixed(0) + '% invulnerable', (x1 + x2) / 2, 20);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERACTIVE: RESPONSE CURVE VISUALIZER
+// ═══════════════════════════════════════════════════════════════
+function drawCurve() {
+  const c = document.getElementById('curveCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const type = document.getElementById('curveType').value;
+  const p1Raw = parseInt(document.getElementById('curveP1').value);
+  const p2Raw = parseInt(document.getElementById('curveP2').value);
+  
+  let p1, p2, p1Label, p2Label;
+  switch(type) {
+    case 'linear': p1 = p1Raw/50; p2 = (p2Raw-50)/100; p1Label='Slope: '+p1.toFixed(1); p2Label='Offset: '+p2.toFixed(2); break;
+    case 'quadratic': p1 = p1Raw/20; p2 = 0; p1Label='Exponent: '+p1.toFixed(1); p2Label='N/A'; break;
+    case 'logistic': p1 = p1Raw/10; p2 = p2Raw/100; p1Label='Steepness: '+p1.toFixed(1); p2Label='Midpoint: '+p2.toFixed(2); break;
+    case 'step': p1 = p1Raw/100; p2 = 0; p1Label='Threshold: '+p1.toFixed(2); p2Label='N/A'; break;
+    case 'inverse': p1 = 0; p2 = 0; p1Label='N/A'; p2Label='N/A'; break;
+  }
+  document.getElementById('curveP1Val').textContent = p1Label.split(': ')[1]||'';
+  document.getElementById('curveP2Val').textContent = p2Label.split(': ')[1]||'';
+  
+  function evalCurve(x) {
+    x = Math.max(0, Math.min(1, x));
+    switch(type) {
+      case 'linear': return Math.max(0, Math.min(1, p1 * x + p2));
+      case 'quadratic': return Math.pow(x, Math.max(0.1, p1));
+      case 'logistic': return 1 / (1 + Math.exp(-p1 * (x - p2)));
+      case 'step': return x >= p1 ? 1 : 0;
+      case 'inverse': return 1 - x;
+    }
+  }
+  
+  ctx.clearRect(0, 0, W, H);
+  const pad = 50, gw = W - pad * 2, gh = H - pad * 2;
+  
+  // Grid
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (i/4) * gh;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad+gw, y); ctx.stroke();
+    ctx.fillStyle = '#6e7681'; ctx.font = '11px Segoe UI'; ctx.textAlign = 'right';
+    ctx.fillText((1 - i/4).toFixed(1), pad - 8, y + 4);
+  }
+  for (let i = 0; i <= 4; i++) {
+    const x = pad + (i/4) * gw;
+    ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, pad+gh); ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.fillText((i/4).toFixed(1), x, pad + gh + 16);
+  }
+  
+  // Curve
+  ctx.beginPath();
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 3;
+  for (let px = 0; px <= gw; px++) {
+    const x = px / gw;
+    const y = evalCurve(x);
+    const sx = pad + px;
+    const sy = pad + (1 - y) * gh;
+    px === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
+  }
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = '#c9d1d9'; ctx.font = '12px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('Input (0→1)', W/2, H - 5);
+  ctx.save(); ctx.translate(12, H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Score (0→1)', 0, 0); ctx.restore();
+  ctx.fillStyle = '#58a6ff'; ctx.font = '13px Segoe UI';
+  ctx.fillText(type.toUpperCase() + ' — ' + p1Label, W/2, 20);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERACTIVE: DAMAGE CALCULATOR
+// ═══════════════════════════════════════════════════════════════
+function calcDamage() {
+  const base = parseInt(document.getElementById('dmgBase').value);
+  const armor = parseInt(document.getElementById('dmgArmor').value) / 100;
+  const weak = parseInt(document.getElementById('dmgWeak').value) / 100;
+  const angle = document.getElementById('dmgAngle').value;
+  document.getElementById('dmgBaseVal').textContent = base;
+  document.getElementById('dmgArmorVal').textContent = (armor*100).toFixed(0) + '%';
+  document.getElementById('dmgWeakVal').textContent = weak.toFixed(1) + 'x';
+  let final = base, note = '';
+  if (angle === 'front') { final = base * (1 - armor); note = `Frontal armor: -${(armor*100).toFixed(0)}%`; }
+  else if (angle === 'back') { final = base * weak; note = `Weak point: ×${weak.toFixed(1)}`; }
+  else { note = 'Side hit: no modifiers'; }
+  document.getElementById('dmgResult').textContent = final.toFixed(1);
+  document.getElementById('dmgResult').style.color = angle==='back'?'var(--error)':angle==='front'?'var(--accent2)':'var(--accent)';
+  document.getElementById('dmgNote').textContent = note;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════
+updateNav();
+showPage('week1');
+</script>
+</body>
+</html>
