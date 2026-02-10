@@ -1,0 +1,1 @@
+Create an interactive html file that teaches the entire curriculum found inside of @curriculumoutline.md. Include lessons, interactive modules, quizzes, tests, and other materials that will make students absolutely master the understanding and software engineering needed to create this game.
