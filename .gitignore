@@ -1,0 +1,22 @@
+# UE5 Build artifacts
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+Build/
+
+# IDE files
+.vs/
+.vscode/
+*.sln
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# LFS managed (tracked in .gitattributes)
