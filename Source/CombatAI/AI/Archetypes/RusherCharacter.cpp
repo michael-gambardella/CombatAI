@@ -2,7 +2,7 @@
 
 #include "RusherCharacter.h"
 #include "CombatAI/AI/UtilityAI/UtilityAIComponent.h"
-#include "CombatAI/AI/Core/AIPerceptionComponent.h"
+#include "CombatAI/AI/Core/CombatAIPerceptionComponent.h"
 #include "CombatAI/Combat/CombatComponent.h"
 #include "CombatAI/Combat/HitDetection.h"
 #include "CombatAI/CombatAI.h"

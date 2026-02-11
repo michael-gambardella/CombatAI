@@ -1,12 +1,13 @@
 // Copyright CombatAI Project. All Rights Reserved.
 
-#include "AIPerceptionComponent.h"
+#include "CombatAIPerceptionComponent.h"
 #include "AICharacterBase.h"
 #include "CombatAI/Player/PlayerCharacter.h"
 #include "CombatAI/Combat/CombatComponent.h"
 #include "CombatAI/CombatAI.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Engine/OverlapResult.h"
 
 UAICombatPerceptionComponent::UAICombatPerceptionComponent()
 {

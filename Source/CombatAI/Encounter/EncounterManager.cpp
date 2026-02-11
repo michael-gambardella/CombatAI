@@ -5,6 +5,7 @@
 #include "CombatAI/Data/EnemyProfileData.h"
 #include "CombatAI/AI/Core/AICharacterBase.h"
 #include "CombatAI/AI/Coordination/SquadCoordinator.h"
+#include "CombatAI/AI/Coordination/AttackTokenSystem.h"
 #include "CombatAI/AI/Archetypes/RusherCharacter.h"
 #include "CombatAI/AI/Archetypes/WatcherCharacter.h"
 #include "CombatAI/AI/Archetypes/WardenCharacter.h"

@@ -1156,7 +1156,7 @@ An optional **dynamic difficulty** layer tracks player performance and adjusts i
 │   ├── Core/
 │   │   ├── AICharacterBase.h/.cpp         // Base enemy class
 │   │   ├── AIControllerBase.h/.cpp        // Base AI controller
-│   │   └── AIPerceptionComponent.h/.cpp   // Custom perception
+│   │   └── CombatAIPerceptionComponent.h/.cpp   // Custom perception
 │   │
 │   ├── UtilityAI/
 │   │   ├── UtilityAIComponent.h/.cpp      // Main Utility AI brain

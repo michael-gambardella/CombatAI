@@ -5,6 +5,7 @@
 #include "CombatAI/AI/Core/AICharacterBase.h"
 #include "CombatAI/Data/SquadProfileData.h"
 #include "CombatAI/Player/PlayerCharacter.h"
+#include "CombatAI/Player/PlayerStatsComponent.h"
 #include "CombatAI/Combat/CombatComponent.h"
 #include "CombatAI/CombatAI.h"
 #include "Kismet/GameplayStatics.h"

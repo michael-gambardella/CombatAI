@@ -2,7 +2,7 @@
 
 #include "EnemyProfileData.h"
 #include "CombatAI/AI/Core/AICharacterBase.h"
-#include "CombatAI/AI/Core/AIPerceptionComponent.h"
+#include "CombatAI/AI/Core/CombatAIPerceptionComponent.h"
 #include "CombatAI/AI/UtilityAI/UtilityAIComponent.h"
 #include "CombatAI/Combat/CombatComponent.h"
 #include "CombatAI/CombatAI.h"

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "CombatAI/Combat/CombatTypes.h"
-#include "AIPerceptionComponent.generated.h"
+#include "CombatAIPerceptionComponent.generated.h"
 
 class AAICharacterBase;
 

@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"EngineAssociation": "5.4",
 	"Category": "",
-	"Description": "Third-Person Combat AI System — Portfolio Project",
+	"Description": "Third-Person Combat AI System  Portfolio Project",
 	"Modules": [
 		{
 			"Name": "CombatAI",
@@ -23,6 +23,10 @@
 		},
 		{
 			"Name": "Niagara",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayAbilities",
 			"Enabled": true
 		},
 		{

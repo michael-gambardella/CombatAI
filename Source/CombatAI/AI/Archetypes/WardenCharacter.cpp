@@ -2,11 +2,13 @@
 
 #include "WardenCharacter.h"
 #include "CombatAI/AI/UtilityAI/UtilityAIComponent.h"
-#include "CombatAI/AI/Core/AIPerceptionComponent.h"
+#include "CombatAI/AI/Core/CombatAIPerceptionComponent.h"
 #include "CombatAI/Combat/CombatComponent.h"
+#include "CombatAI/Combat/HitDetection.h"
 #include "CombatAI/CombatAI.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/OverlapResult.h"
 
 AWardenCharacter::AWardenCharacter()
 {

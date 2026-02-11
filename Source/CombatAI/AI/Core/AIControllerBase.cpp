@@ -28,7 +28,8 @@ void AAIControllerBase::OnPossess(APawn* InPawn)
 
 	if (BlackboardAsset)
 	{
-		UseBlackboard(BlackboardAsset, BBComponent);
+		UBlackboardComponent* BBComp = BBComponent.Get();
+		UseBlackboard(BlackboardAsset, BBComp);
 	}
 
 	StartAIBehavior();
