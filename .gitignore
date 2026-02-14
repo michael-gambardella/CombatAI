@@ -20,3 +20,6 @@ Thumbs.db
 .DS_Store
 
 # LFS managed (tracked in .gitattributes)
+
+
+Plugins/VisualStudioTools/
